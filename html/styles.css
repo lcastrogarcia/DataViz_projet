@@ -1,0 +1,36 @@
+main {
+	margin-top:58px;
+}
+.navbar-nav {
+	margin-top:2px;
+}
+.nav-link:hover, .nav-link:focus {
+	color:#FFF !important;
+}
+.anchor_spacer {
+	display:block;
+  height:58px; /*same height as header*/
+  margin-top:-58px; /*same height as header*/
+  visibility:hidden;
+}
+.jumbotron {
+	padding-top:18px;
+	padding-bottom:18px;
+}
+iframe {
+	border:0;
+}
+.alter {
+	background:#F6F6F6;
+	padding-top:15px;
+}
+.spacer {
+	padding-top:40px;
+}
+em.copy {
+	font-size:10px;
+}
+.detail_pie {
+	text-align:center;
+	font-weight:bold;
+}

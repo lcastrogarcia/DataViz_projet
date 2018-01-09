@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DV project</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+  	<script src="https://d3js.org/d3.v4.min.js"></script>
+  
+  <!--Dépendances pour le module de créations dynamique des clusters-->
+<!--téléchargement, documentation et exemples : https://github.com/Leaflet/Leaflet.markercluster-->
+  <link rel="stylesheet" href="MarkerCluster.css" />
+	<link rel="stylesheet" href="MarkerCluster.Default.css" />
+	<script src="leaflet.markercluster-src.js"></script>
+  
+</head>
+<body>
+
+
+
+<div id="map" style="width: 640px; height: 640px;"></div>
+<script>
+L.Mask = L.Polygon.extend({
+	options: {
+		stroke: false,
+		color: '#333',
+		fillOpacity: 0.2,
+		clickable: true,
+
+		outerBounds: new L.LatLngBounds([-90, -360], [90, 360])
+	},
+
+	initialize: function (latLngs, options) {
+        
+         var outerBoundsLatLngs = [
+			this.options.outerBounds.getSouthWest(),
+			this.options.outerBounds.getNorthWest(),
+			this.options.outerBounds.getNorthEast(),
+			this.options.outerBounds.getSouthEast()
+		];
+        L.Polygon.prototype.initialize.call(this, [outerBoundsLatLngs, latLngs], options);	
+	},
+
+});
+L.mask = function (latLngs, options) {
+	return new L.Mask(latLngs, options);
+};
+
+// Polygon created with http://geojson.io/
+var france = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              2.5048828125,
+              51.33061163769853
+            ],
+            [
+              1.0546875,
+              50.90303283111257
+            ],
+            [
+              1.0546875,
+              50.14874640066278
+            ],
+            [
+              -0.50537109375,
+              49.63917719651036
+            ],
+            [
+              -1.9775390625,
+              49.92293545449574
+            ],
+            [
+              -2.21923828125,
+              49.653404588437894
+            ],
+            [
+              -1.9335937499999998,
+              48.93693495409401
+            ],
+            [
+              -5.361328125,
+              48.86471476180277
+            ],
+            [
+              -4.7021484375,
+              47.45780853075031
+            ],
+            [
+              -2.900390625,
+              46.92025531537451
+            ],
+            [
+              -1.669921875,
+              45.583289756006316
+            ],
+            [
+              -2.1533203125,
+              43.08493742707592
+            ],
+            [
+              3.6035156249999996,
+              41.902277040963696
+            ],
+            [
+              3.5595703125,
+              42.87596410238256
+            ],
+            [
+              8.0859375,
+              42.74701217318067
+            ],
+            [
+              7.4267578125,
+              46.98025235521883
+            ],
+            [
+              8.876953125,
+              49.18170338770663
+            ],
+            [
+              2.5048828125,
+              51.33061163769853
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+var lat = 46.566414;
+var lng =  2.4609375;
+var zoom =  6;
+
+var map = new L.Map('map');
+
+ 
+var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+var osmAttrib='Lucia CASTRO-GARCIA, Elisa DENIER, Lorraine SOUDADE';
+var osm = new L.TileLayer(osmUrl, {minZoom: 6, maxZoom: 14, attribution: osmAttrib});
+map.addLayer(osm);
+
+map.setView(new L.LatLng(lat, lng), zoom);
+
+// transform geojson coordinates into an array of L.LatLng
+var coordinates = france.features[0].geometry.coordinates[0];
+var latLngs = [];
+for (i=0; i<coordinates.length; i++) {
+    latLngs.push(new L.LatLng(coordinates[i][1], coordinates[i][0]));
+}
+  
+  /**DÉBUT DE L'AJOUT DES MARQUEURS ET CLUSTEURS**/    
+   
+// On créer un conteneur pour les clustur dynamique d'accidents
+var markers = L.markerClusterGroup();
+ 
+//On parcours les données
+d3.csv("caracteristiques_2016.csv", function(data){
+  for (i = 0; i < data.length ; i++){
+// Si les coordonées ne sont pas nulles
+    if(!("0" == 0 && data[i].long == 0)){
+//On définit les lat et long de chaques marqueurs
+      	var markLat = data[i].lat;
+      	var markLong = data[i].long;
+      	markLat = parseFloat(markLat.slice(0,2) + "." + markLat.slice(2));
+        markLong = parseFloat(markLong.slice(0,2) + "." + markLong.slice(2));
+		if(L.latLngBounds(latLngs).contains([markLat,markLong])){
+      //On ajoute les marqueurs on conteneur dynamique
+      	m = L.marker([markLat,markLong]).bindTooltip(data[i].Num_Acc);
+      	m.num_acc= data[i].Num_Acc;
+      	m.on("mouseover", function(event){console.log(event.target.num_acc)})
+      	markers.addLayer(m);
+    }
+    }
+    
+  }
+});
+  
+markers.on('clustermouseover', function(event) {
+  // your custom L.MarkerCluster extended with function highlight()
+  markers_array = event.layer.getAllChildMarkers()
+  accidents = []
+  for (var i = 0; i < markers_array.length; i++){
+    accidents.push(markers_array[i].num_acc);
+  }
+})
+
+/*markers.on('clustermouseout', function(event) {
+  // your custom L.MarkerCluster extended with function resetHighlight()
+  console.log(2);
+})*/
+// On ajoute le conteneur dynamique à la carte
+map.addLayer(markers);
+
+/**FIN DE L'AJOUT DES MARQUEURS ET CLUSTEURS**/
+
+L.mask(latLngs).addTo(map);
+
+/*map.dragging.disable();*/
+
+  
+/*d3.json("paires.json", function(error, graph) {
+		if (error) throw error;
+});*/
+  
+  
+  
+</script>
+</body>
+</html>
+

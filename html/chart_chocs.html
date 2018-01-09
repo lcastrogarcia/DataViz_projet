@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8 />
+
+  <title>"Percent complete" bar</title>
+  <style>
+  	html, body, svg, g, rect, text, #container {
+    	margin:0;
+    	padding:0;
+    }
+  	div.bg {
+  		width:510px;
+			height:300px;
+			background:url("car.png");
+			background-size: 100% 100%;
+		}
+    text {
+      fill:#333;
+      font-family:"arial"; 
+      font-size:30px;
+      font-weight:bold;
+    }
+    .place {
+    	fill-opacity:0.6;
+    }
+    .place * {
+     	pointer-events:none;
+		}
+    svg {
+    	margin-top:-300px;
+    	vertical-align:top;
+    }
+  </style>
+</head>
+
+<body>  
+  
+  <div class="bg"></div>
+  <div id="container" class="chart_chocs"></div> <!--d3 chart gets inserted in this div-->
+  
+  <script src="https://d3js.org/d3.v3.js"></script>
+  <script>
+	let count_choc = {
+		6: 0,
+		8: 0,
+		3: 0,
+		4: 0,
+		1: 0,
+		5: 0,
+		7: 0,
+		2: 0
+	}
+	
+	d3.csv("vehicules_2016.csv", function(usagers) {
+		count_choc_total = 0;
+		for (let j = 0; j < usagers.length ; j++) {
+				var choc = usagers[j].choc;
+				count_choc[choc] = count_choc[choc]+1;
+				count_choc_total+=1;
+		}
+		
+		console.log(count_choc);
+		console.log(count_choc_total);
+		
+		choc_color = d3.scale.linear().domain([1,30000])
+      .interpolate(d3.interpolateHcl)
+      .range([d3.rgb("#fff765"), d3.rgb('#FF0000')]);
+    
+    let count_choc_color = {
+			6: 0,
+			8: 0,
+			3: 0,
+			4: 0,
+			1: 0,
+			5: 0,
+			7: 0,
+			2: 0
+		}
+		let count_choc_percentage = {
+			6: 0,
+			8: 0,
+			3: 0,
+			4: 0,
+			1: 0,
+			5: 0,
+			7: 0,
+			2: 0
+		}
+		 
+    Object.keys(count_choc).forEach(function(choc_id){
+				count_choc_color[choc_id] = choc_color(count_choc[choc_id]);
+				count_choc_percentage[choc_id] = count_choc[choc_id] * 100 / count_choc_total;
+				count_choc_percentage[choc_id] = count_choc_percentage[choc_id].toFixed(0);
+		}); 
+		
+		 
+		w = 510;
+		h = 300;
+		
+	
+		wb = w/3;
+		hb = h/3;
+    
+		var svgContainer = d3.select("body").append("svg")
+		                                    .attr("width", w)
+		                                    .attr("height", h);
+		  
+		var vehicle = svgContainer.append("g");
+		  
+		//Draw the Vehicle
+		var place_6 = vehicle.append("rect")
+		  .attr('class','place place_6')
+		  .attr("x", 0)
+		  .attr("y", 0)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", count_choc_color[6]);
+		var place_8 = vehicle.append("rect")
+		  .attr('class','place place_8')
+		  .attr("x", wb)
+		  .attr("y", 0)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", count_choc_color[8]);
+		var place_3 = vehicle.append("rect")
+		  .attr('class','place place_3')
+		  .attr("x", wb+wb)
+		  .attr("y", 0)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", count_choc_color[3]);
+		  
+		var place_4 = vehicle.append("rect")
+		  .attr('class','place place_4')
+		  .attr("x", 0)
+		  .attr("y", hb)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", count_choc_color[4]);
+		var place_0 = vehicle.append("rect")
+		  .attr('class','place place_0')
+		  .attr("x", wb)
+		  .attr("y", hb)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", "#EEE");
+		var place_1 = vehicle.append("rect")
+		  .attr('class','place place_1')
+		  .attr("x", wb+wb)
+		  .attr("y", hb)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", count_choc_color[1]);
+		  
+		var place_5 = vehicle.append("rect")
+		  .attr('class','place place_5')
+		  .attr("x", 0)
+		  .attr("y", hb+hb)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", count_choc_color[5]);
+		var place_7 = vehicle.append("rect")
+		  .attr('class','place place_7')
+		  .attr("x", wb)
+		  .attr("y", hb+hb)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", count_choc_color[7]);
+		var place_2 = vehicle.append("rect")
+		  .attr('class','place place_2')
+		  .attr("x", wb+wb)
+		  .attr("y", hb+hb)
+		  .attr("width", wb)
+		  .attr("height", hb)
+		  .style("fill", count_choc_color[2]);
+
+
+		//Show percentage
+		vehicle.append("text")
+		  .attr("x", 60)
+		  .attr("y", 60)
+		  .text(function(d) { return count_choc_percentage[6] + "%"; });
+		vehicle.append("text")
+		  .attr("x", 60+wb)
+		  .attr("y", 60)
+		  .text(function(d) { return count_choc_percentage[8] + "%"; });
+		vehicle.append("text")
+		  .attr("x", 60+wb+wb)
+		  .attr("y", 60)
+		  .text(function(d) { return count_choc_percentage[3] + "%"; });
+		  
+		vehicle.append("text")
+		  .attr("x", 60)
+		  .attr("y", 60+hb)
+		  .text(function(d) { return count_choc_percentage[4] + "%"; });
+		vehicle.append("text")
+		  .attr("x", 60+wb+wb)
+		  .attr("y", 60+hb)
+		  .text(function(d) { return count_choc_percentage[1] + "%"; });
+		  
+		vehicle.append("text")
+		  .attr("x", 60)
+		  .attr("y", 60+hb+hb)
+		  .text(function(d) { return count_choc_percentage[5] + "%"; });
+		vehicle.append("text")
+		  .attr("x", 60+wb)
+		  .attr("y", 60+hb+hb)
+		  .text(function(d) { return count_choc_percentage[7] + "%"; });
+		vehicle.append("text")
+		  .attr("x", 60+wb+wb)
+		  .attr("y", 60+hb+hb)
+		  .text(function(d) { return count_choc_percentage[2] + "%"; });
+		  
+  
+  });
+  </script>
+ 
+</body>
+</html>
+

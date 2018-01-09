@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>"Percent complete" bar</title>
+  <style>
+    .male {
+      fill:#5BC0EB;
+    }
+    .female {
+      fill:#E55934;
+    }
+    text {
+      fill:#FFF;
+      font-family:"arial"; 
+      font-size:40px;
+      font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>  
+  <div id="container"></div> <!--d3 chart gets inserted in this div-->
+  <script src="https://d3js.org/d3.v4.js"></script>
+  <script>
+   
+//On charge les données des usagers pour le stacked chart des H/F
+let count_homme = 0;
+let count_femme = 0;
+d3.csv("usagers_2016.csv", function(usagers){
+  for (let j = 0; j < usagers.length ; j++){
+    var conducteur = usagers[j].catu;
+    if (conducteur == '1'){
+      var sexe = usagers[j].sexe;
+      if (sexe == '1'){
+      count_homme++;
+      }
+      if (sexe == '2'){
+        count_femme++;
+      }
+    }
+    
+    }
+total_acteurs = count_femme + count_homme
+per_femme = (count_femme/total_acteurs)*100
+per_homme = (count_homme/total_acteurs)*100
+
+
+	w = 500;
+  h = 80;
+  percentage_female = per_femme.toFixed(0);
+  percentage_male = per_homme.toFixed(0);
+  width_female = w * percentage_female / 100 ;
+    
+  var svgContainer = d3.select("body").append("svg")
+                                      .attr("width", w)
+                                      .attr("height", h);
+    
+  var group = svgContainer.append("g");
+    
+	//Draw the Rectangle
+  var rectangle = group.append("rect")
+    .attr('class','male')
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", w)
+    .attr("height", h);
+
+  //Draw the Rectangle
+  var rectangle_female = group.append("rect")
+    .attr('class','female')
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", width_female)
+    .attr("height", h);
+
+  group.append("text")
+    .attr("x", 10)
+    .attr("y", 52)
+    .text(function(d) { return percentage_female + "%"; });
+  group.append("text")
+    .attr("x", 410)
+    .attr("y", 52)
+    .text(function(d) { return percentage_male + "%"; });
+}) 
+  </script>
+ 
+</body>
+</html>
