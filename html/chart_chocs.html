@@ -55,15 +55,16 @@
 	d3.csv("vehicules_2016.csv", function(usagers) {
 		count_choc_total = 0;
 		for (let j = 0; j < usagers.length ; j++) {
-				var choc = usagers[j].choc;
-				count_choc[choc] = count_choc[choc]+1;
-				count_choc_total+=1;
+				if (usagers[j].catv == "07") {
+					var choc = usagers[j].choc;
+					count_choc[choc] = count_choc[choc]+1;
+					count_choc_total+=1;
+				}
 		}
 		
-		console.log(count_choc);
 		console.log(count_choc_total);
 		
-		choc_color = d3.scale.linear().domain([1,30000])
+		choc_color = d3.scale.linear().domain([1,20000])
       .interpolate(d3.interpolateHcl)
       .range([d3.rgb("#fff765"), d3.rgb('#FF0000')]);
     

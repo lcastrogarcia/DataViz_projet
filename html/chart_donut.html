@@ -1,62 +1,120 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<canvas width="400" height="400"></canvas>
-<script src="//d3js.org/d3.v4.0.0-alpha.4.min.js"></script>
+<div class="widget">
+    <div id="chart" class="chart-container">
+    </div>
+</div>
+<style>
+body {
+    font-family: 'arial';
+}
+</style>
+<script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
+var dataset = [
+    { name: 'blessés légers', percent: 35.04 },
+  
+    { name: 'blessés hospitalisés', percent: 21.27 },
+  	{ name: 'indemnes', percent: 40.95 },
+    { name: 'tues', percent: 2.74 }
+];
+ 
+var pie=d3.pie()
+  .value(function(d){return d.percent})
+  .sort(null)
+  .padAngle(.03);
+ 
+var w=300,h=300;
+ 
+var outerRadius=w/2;
+var innerRadius=100;
+ 
+var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-var canvas = document.querySelector("canvas"),
-    context = canvas.getContext("2d");
+  
+var arc=d3.arc()
+  .outerRadius(outerRadius)
+  .innerRadius(innerRadius);
+ 
+var svg = d3.select("#chart")
+  .append("svg")
+	.attr("width",w)
+	.attr("height",h)
+	.attr("class",'shadow')
+  .append("g")
+	.attr("transform", "translate("+w/2+","+h/2+")")
 
-var width = canvas.width,
-    height = canvas.height,
-    radius = Math.min(width, height) / 2;
-
-var colors = ["#5BC0EB", "#E55934", "#FDE74C", "#9BC53D"];
-
-var arc = d3.arc()
-    .outerRadius(radius - 10)
-    .innerRadius(radius - 70)
-    .context(context);
-
-var labelArc = d3.arc()
-    .outerRadius(radius - 40)
-    .innerRadius(radius - 40)
-    .context(context);
-
-var pie = d3.pie()
-    .sort(null)
-    .value(function(d) { return d.quantite; });
-
-context.translate(width / 2, height / 2);
-
-d3.requestTsv("prepared_gravite", function(d) {
-  d.quantite = +d.quantite;
-  return d;
-}, function(error, data) {
-  if (error) throw error;
-
-  var arcs = pie(data);
-
-  arcs.forEach(function(d, i) {
-    context.beginPath();
-    arc(d);
-    context.fillStyle = colors[i];
-    context.fill();
+var path = svg.selectAll('path')
+  .data(pie(dataset))
+  .enter()
+  .append("path")
+  .attr("d",arc)
+	.attr("fill",function(d,i){
+          return color(d.data.name);
   });
-
-  context.beginPath();
-  arcs.forEach(arc);
-  context.strokeStyle = "#fff";
-  context.stroke();
-
-  context.textAlign = "center";
-  context.textBaseline = "middle";
-  context.fillStyle = "#000";
-  arcs.forEach(function(d) {
-    var c = labelArc.centroid(d);
-    context.fillText(d.data.gravite, c[0], c[1]);
+ 
+path.transition()
+  .duration(1000)
+  .attrTween('d', function(d) {
+      var interpolate = d3.interpolate({startAngle: 0, endAngle: 0}, d);
+      return function(t) {
+          return arc(interpolate(t));
+      };
   });
-});
-
+ 
+ 
+var restOfTheData=function(){
+    var text=svg.selectAll('text')
+        .data(pie(dataset))
+        .enter()
+        .append("text")
+        .transition()
+        .duration(200)
+        .attr("transform", function (d) {
+            return "translate(" + arc.centroid(d) + ")";
+        })
+        .attr("dy", ".4em")
+        .attr("text-anchor", "middle")
+        .text(function(d){
+            return d.data.percent+"%";
+        })
+        .style("fill", "#000000")
+    		.style("font-size","15px")
+    		.style("font-weight","bold");
+ 
+    var legendRectSize=20;
+    var legendSpacing=7;
+    var legendHeight=legendRectSize+legendSpacing;
+ 
+ 
+    var legend=svg.selectAll('.legend')
+        .data(color.domain())
+        .enter()
+        .append('g')
+        .attr("class","legend")
+    		.attr("transform",function(d,i){return 'translate(-70,' + ((i*legendHeight)-60) + ')';
+            });
+    legend.append('rect')
+        .attr("width",legendRectSize)
+    		.attr("height",legendRectSize)
+    		.attr("rx",20)
+    		.attr("ry",20)
+        .style("fill",color)
+    		.style("stroke",color);
+ 
+    legend.append('text')
+        .attr("x",30)
+    		.attr("y",15)
+        
+        .text(function(d){
+            return d;
+        })
+      	
+   			.style("font-size","14px");
+};
+ 
+setTimeout(restOfTheData,1000);
 </script>
+
+
 

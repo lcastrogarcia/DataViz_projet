@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+
 <style>
 
 body {
@@ -163,6 +164,8 @@ d3.csv("accs_per_day.csv", function(error, csv) {
     .select("title")
       .text(function(d) { return d + ": " + data.get(d); });
 });
+  
+
 
 function monthPath(t0) {
   var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
@@ -176,4 +179,43 @@ function monthPath(t0) {
 }
 
 </script>
+<div id="legend"></div>
+  <script>
+    
+      var svgContainer = d3.select("#legend").append("svg")
+                                   .attr("width", 800)
+                                    .attr("height", 25);
+    svgContainer.append("text")
+                            .attr("x", 0)
+                            .attr("y", 25)
+    												.text("Faible concentration d'accidents")
+    
+var rectangle = svgContainer.append("rect")
+                            .attr("x", 160)
+                            .attr("y", 10)
+                            .attr("width", 20)
+                            .attr("height", 20).attr("fill","#006837");
+    
+    svgContainer.append("rect")
+                            .attr("x", 190)
+                            .attr("y", 10)
+                            .attr("width", 20)
+                            .attr("height", 20).attr("fill","#A6D96A");
+    
+        svgContainer.append("rect")
+                            .attr("x", 220)
+                            .attr("y", 10)
+                            .attr("width", 20)
+                            .attr("height", 20).attr("fill","#FEE08B");        svgContainer.append("rect")
+                            .attr("x", 250)
+                            .attr("y", 10)
+                            .attr("width", 20)
+                            .attr("height", 20).attr("fill","#A50026");
 
+    svgContainer.append("text")
+                            .attr("x", 280)
+                            .attr("y", 25)
+    												.text("Forte concentration d'accidents")
+    
+    
+  </script>

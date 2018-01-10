@@ -66,7 +66,7 @@
           	<h2>Répartition des accidents par jours de l'année</h2>
             <iframe src="./chart_calendar.html" 
 								 width="1000" 
-								 height="180">
+								 height="210">
 						</iframe> 
           </div>
         </div>
@@ -74,10 +74,11 @@
         <div class="anchor_spacer" id="chart_heure"></div>
         <div class="row alter">
           <div class="col-md-12">
-          	<h2>Répartition des accidents par heures de la journée <strong style="color:red;">(il faudra copier le code du line chart dans chart_line.html à la place du code du calendar que j'ai mis dedans...)</strong></h2>
+          	<h2>Répartition des accidents par heures de la journée </h2>
+		  <em>Cliquez sur un point gris pour plus d'informations</em>
             <iframe src="./chart_line.html" 
 								 width="1000" 
-								 height="180">
+								 height="550">
 						</iframe> 
           </div>
         </div>
@@ -101,7 +102,7 @@
           <div class="col-md-6">
             <iframe src="./chart_sex.html" 
 								 width="530" 
-								 height="140">
+								 height="110">
 						</iframe> 
           </div>
           <div class="col-md-6">
@@ -113,43 +114,26 @@
         
         <div class="anchor_spacer" id="chart_age"></div>
         <div class="row spacer">
-          <div class="col-md-5">
-            <iframe src="./chart_pie_total.html" 
-								 width="430" 
-								 height="430">
+          <div class="col-md-12">
+          	<h2>Répartition des accidents par tranche d'âge et par sexe</h2>
+            <iframe src="./chart_pie.html" 
+								 width="1000" 
+								 height="490"
+								 scrolling="no">
 						</iframe> 
           </div>
-          <div class="col-md-7">
-            <h2>Répartition des accidents par tranche d'âge <strong style="color:red;">(il faut ajouter les pourcentages sur le chart...)</strong></h2>
-            
-            <div class="row">
-		          <div class="col-md-6 detail_pie">Femmes
-		          <iframe src="./chart_pie_femmes.html" 
-									 width="260" 
-									 height="280">
-							</iframe>
-							</div> 
-							<div class="col-md-6 detail_pie">Hommes
-							<iframe src="./chart_pie_hommes.html" 
-									 width="260" 
-									 height="280">
-							</iframe> 
-							</div>
-						</div>
-          </div>
         </div>
-        
+                
         <div class="anchor_spacer" id="chart_gravite"></div>
         <div class="row alter">
           <div class="col-md-5">
             <iframe src="./chart_donut.html" 
 								 width="430" 
-								 height="430">
+								 height="330">
 						</iframe> 
           </div>
           <div class="col-md-7">
-            <h2>Répartition des accidents par gravité <strong style="color:red;">(il faut ajouter les pourcentages sur le chart...)</strong></h2>
-            <p>Description & légende du graphique</p>
+            <h2>Répartition des accidents par gravité</h2>
           </div>
         </div>
         
@@ -163,7 +147,7 @@
           </div>
           <div class="col-md-5">
             <h2>Répartition des accidents par localisation</h2>
-            <p>Description & légende du graphique</p>
+            <p><em>Actionnez la molette de la souris pour zoomer et mettre à jour les clusters</em></p>
           </div>
         </div>
 
@@ -178,4 +162,5 @@
     </footer>
   </body>
 </html>
+
 
