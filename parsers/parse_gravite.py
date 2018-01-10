@@ -30,12 +30,16 @@ for i in range(1,len(content)):
 	except ValueError:
 		pass 
 	
-prepared_gravite.write("indemnes" + "\t" + str(indemnes)+"\n")
+total = tues + indemnes + blesses_leger + blesses_hosp
+def percentage(n1,tot):
+	return round(((n1/tot)*100),2)
 
-prepared_gravite.write("tues" + "\t" + str(tues)+"\n")
+prepared_gravite.write("indemnes" + "\t" + str(percentage(indemnes,total))+"\n")
 
-prepared_gravite.write("blesses_hosp" + "\t" + str(blesses_hosp)+"\n")
+prepared_gravite.write("tues" + "\t" + str(percentage(tues,total))+"\n")
 
-prepared_gravite.write("blesses_leger" + "\t" + str(blesses_leger)+"\n")
+prepared_gravite.write("blesses_hosp" + "\t" + str(percentage(blesses_hosp,total))+"\n")
+
+prepared_gravite.write("blesses_leger" + "\t" + str(percentage(blesses_leger,total))+"\n")
 
 
